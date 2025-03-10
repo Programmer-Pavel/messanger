@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { UseControllerProps, useController } from 'react-hook-form';
+import { Control, useController } from 'react-hook-form';
 import cn from 'classnames';
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -16,7 +16,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
   showPasswordToggle?: boolean;
   showClearButton?: boolean;
-  control?: UseControllerProps['control'];
+  control?: Control<any>;
   name?: string;
   error?: string;
 }

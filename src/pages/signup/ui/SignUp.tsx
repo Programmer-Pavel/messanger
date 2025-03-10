@@ -5,6 +5,7 @@ import { SignupDTO, signupSchema } from '../model/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@shared/ui/Button';
 import { Link, useNavigate } from 'react-router-dom';
+import chatImg from '@assets/chat.png';
 
 export function Signup() {
   const {
@@ -35,11 +36,7 @@ export function Signup() {
   return (
     <div className="bg-white flex w-96 max-w-96 flex-1 flex-col justify-center px-6 py-12 lg:px-8 border border-gray-200 rounded-lg shadow-md">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          alt="Your Company"
-          src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-          className="mx-auto h-10 w-auto"
-        />
+        <img alt="Your Company" src={chatImg} className="mx-auto h-10 w-auto" />
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
           Создать аккаунт
         </h2>
@@ -47,12 +44,12 @@ export function Signup() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form onSubmit={onSubmit} className="space-y-6">
-          <Input control={control as any} name="name" label="Имя" />
+          <Input control={control} name="name" label="Имя" />
 
-          <Input control={control as any} name="email" label="Email" />
+          <Input control={control} name="email" label="Email" />
 
           <Input
-            control={control as any}
+            control={control}
             name="password"
             label="Пароль"
             showPasswordToggle

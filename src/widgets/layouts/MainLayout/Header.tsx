@@ -16,20 +16,14 @@ export const Header = () => {
               Logo
             </Link>
             <nav className="hidden md:flex space-x-8">
-              <Link to="/" className="text-gray-900 hover:text-indigo-600">
-                Dashboard
-              </Link>
-              <Link to="/" className="text-gray-900 hover:text-indigo-600">
-                Projects
-              </Link>
-              <Link to="/" className="text-gray-900 hover:text-indigo-600">
-                Team
-              </Link>
-              <Link to="/login" className="text-gray-900 hover:text-indigo-600">
-                Login
-              </Link>
               <Link to="/chat" className="text-gray-900 hover:text-indigo-600">
                 Chat
+              </Link>
+              <Link
+                to="/fitness"
+                className="text-gray-900 hover:text-indigo-600"
+              >
+                Fitness
               </Link>
             </nav>
           </div>

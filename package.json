@@ -3,24 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "main": "electron/main.js",
   "scripts": {
-    "dev:web": "vite",
-    "dev:desktop": "concurrently \"vite\" \"npm run start:electron\"",
-    "start:electron": "wait-on tcp:5173 && electron .",
-    "build:web": "tsc && vite build",
-    "build:desktop": "tsc && vite build && electron-builder"
-  },
-  "build": {
-    "appId": "com.example.app",
-    "files": [
-      "dist/**/*",
-      "electron/**/*"
-    ],
-    "directories": {
-      "buildResources": "assets",
-      "output": "release"
-    }
+    "dev": "vite",
+    "build": "tsc && vite build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -30,7 +15,6 @@
     "@tanstack/react-query": "^5.65.1",
     "axios": "^1.7.9",
     "classnames": "^2.5.1",
-    "electron-is-dev": "^3.0.1",
     "prettier": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -47,9 +31,6 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
-    "concurrently": "^9.1.2",
-    "electron": "^34.2.0",
-    "electron-builder": "^25.1.8",
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -59,7 +40,6 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
-    "vite-tsconfig-paths": "^5.1.4",
-    "wait-on": "^8.0.2"
+    "vite-tsconfig-paths": "^5.1.4"
   }
 }
