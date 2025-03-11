@@ -19,7 +19,7 @@ export function Signup() {
       password: '',
       email: '',
     },
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
 
   const { mutate, isPending } = useSignupMutation();

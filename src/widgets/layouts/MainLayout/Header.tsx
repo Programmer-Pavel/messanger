@@ -1,34 +1,59 @@
+import { Link, useLocation } from 'react-router-dom';
+import { UserMenu } from './UserMenu';
+import classNames from 'classnames';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 
 export const Header = () => {
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navigation = [
+    { name: 'Chat', to: '/chat' },
+    { name: 'Fitness', to: '/fitness' },
+  ];
+
+  const getNavItemClasses = (path: string) => {
+    const isActive = location.pathname === path;
+
+    return classNames(
+      {
+        'bg-gray-900 text-white': isActive,
+        'text-gray-300 hover:bg-gray-700 hover:text-white': !isActive,
+      },
+      'rounded-md px-3 py-2 text-sm font-medium',
+    );
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <header className="bg-white shadow">
+    <header className="bg-gray-800 shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between items-center">
           <div className="flex items-center gap-8">
             <Link to="/" className="text-2xl font-bold text-indigo-600">
               Logo
             </Link>
+
+            {/* Десктопная навигация */}
             <nav className="hidden md:flex space-x-8">
-              <Link to="/chat" className="text-gray-900 hover:text-indigo-600">
-                Chat
-              </Link>
-              <Link
-                to="/fitness"
-                className="text-gray-900 hover:text-indigo-600"
-              >
-                Fitness
-              </Link>
+              {navigation.map((item) => (
+                <div
+                  key={item.name}
+                  className="flex items-center justify-center gap-x-6"
+                >
+                  <Link to={item.to} className={getNavItemClasses(item.to)}>
+                    {item.name}
+                  </Link>
+                </div>
+              ))}
             </nav>
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Кнопка уведомлений */}
             <button className="text-gray-500 hover:text-gray-700">
               <svg
                 className="h-6 w-6"
@@ -45,17 +70,82 @@ export const Header = () => {
               </svg>
             </button>
 
-            <div className="relative">
-              <button className="flex items-center gap-2 text-gray-700 hover:text-gray-900">
-                <img
-                  className="h-8 w-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="User avatar"
-                />
-                <span>{userData?.name}</span>
-              </button>
-            </div>
+            <UserMenu />
+
+            {/* Бургер-кнопка для мобильного меню */}
+            <button
+              type="button"
+              className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              aria-controls="mobile-menu"
+              aria-expanded="false"
+              onClick={toggleMenu}
+            >
+              <span className="sr-only">Открыть главное меню</span>
+              {/* Иконка бургера (меняется когда меню открыто) */}
+              {!isMenuOpen ? (
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
+            </button>
           </div>
+        </div>
+      </div>
+
+      {/* Мобильное меню */}
+      <div
+        className={classNames(
+          { block: isMenuOpen, hidden: !isMenuOpen },
+          'md:hidden',
+        )}
+        id="mobile-menu"
+      >
+        <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              to={item.to}
+              className={classNames(
+                {
+                  'bg-gray-900 text-white': location.pathname === item.to,
+                  'text-gray-300 hover:bg-gray-700 hover:text-white':
+                    location.pathname !== item.to,
+                },
+                'block rounded-md px-3 py-2 text-base font-medium',
+              )}
+              onClick={() => setIsMenuOpen(false)} // Закрывать меню при переходе
+            >
+              {item.name}
+            </Link>
+          ))}
         </div>
       </div>
     </header>

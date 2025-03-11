@@ -18,7 +18,7 @@ export function Login() {
       password: '',
       email: '',
     },
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
 
   const { mutate, isPending } = useLoginMutation();
