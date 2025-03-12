@@ -1,7 +1,16 @@
-export const Spinner = () => {
+interface SpinnerProps {
+  size?: string | number;
+  className?: string;
+}
+
+export const Spinner = ({ size = '1.25rem', className = '' }: SpinnerProps) => {
+  // Преобразуем числовое значение в строку с единицами измерения
+  const sizeValue = typeof size === 'number' ? `${size}rem` : size;
+
   return (
     <svg
-      className="animate-spin h-5 w-5"
+      className={`animate-spin ${className}`}
+      style={{ width: sizeValue, height: sizeValue }}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

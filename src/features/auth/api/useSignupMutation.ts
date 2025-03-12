@@ -1,6 +1,7 @@
-import { SignupDTO } from '../model/schema';
 import { axiosInstance } from '@shared/lib/axiosConfig';
 import { useCustomMutation } from '@shared/hooks/useCustomMutation';
+import { SignupDTO } from '../model/signupSchema';
+import { API_ENDPOINTS } from '@shared/config/api';
 
 interface SignupResponse {
   message: string;
@@ -9,7 +10,7 @@ interface SignupResponse {
 export function useSignupMutation() {
   return useCustomMutation<SignupResponse, SignupDTO>(async (variables) => {
     const response = await axiosInstance.post<SignupResponse>(
-      '/auth/signup',
+      API_ENDPOINTS.AUTH.SIGNUP,
       variables,
     );
     return response.data;

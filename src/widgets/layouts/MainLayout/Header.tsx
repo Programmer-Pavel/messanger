@@ -1,21 +1,22 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { UserMenu } from './UserMenu';
-import classNames from 'classnames';
+import cn from 'classnames';
 import { useState } from 'react';
+import { ROUTES } from '@shared/config/routes';
 
 export const Header = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: 'Chat', to: '/chat' },
-    { name: 'Fitness', to: '/fitness' },
+    { name: 'Chat', to: ROUTES.CHAT },
+    { name: 'Fitness', to: ROUTES.FITNESS },
   ];
 
   const getNavItemClasses = (path: string) => {
     const isActive = location.pathname === path;
 
-    return classNames(
+    return cn(
       {
         'bg-gray-900 text-white': isActive,
         'text-gray-300 hover:bg-gray-700 hover:text-white': !isActive,
@@ -28,12 +29,35 @@ export const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const mobileMenuClasses = cn(
+    {
+      block: isMenuOpen,
+      hidden: !isMenuOpen,
+    },
+    'md:hidden',
+  );
+
+  const getMobileNavItemClasses = (path: string) => {
+    const isActive = location.pathname === path;
+
+    return cn(
+      {
+        'bg-gray-900 text-white': isActive,
+        'text-gray-300 hover:bg-gray-700 hover:text-white': !isActive,
+      },
+      'block rounded-md px-3 py-2 text-base font-medium',
+    );
+  };
+
   return (
     <header className="bg-gray-800 shadow">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 justify-between items-center">
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-2xl font-bold text-indigo-600">
+            <Link
+              to={ROUTES.ROOT}
+              className="text-2xl font-bold text-indigo-600"
+            >
               Logo
             </Link>
 
@@ -121,26 +145,13 @@ export const Header = () => {
       </div>
 
       {/* Мобильное меню */}
-      <div
-        className={classNames(
-          { block: isMenuOpen, hidden: !isMenuOpen },
-          'md:hidden',
-        )}
-        id="mobile-menu"
-      >
+      <div className={mobileMenuClasses} id="mobile-menu">
         <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
           {navigation.map((item) => (
             <Link
               key={item.name}
               to={item.to}
-              className={classNames(
-                {
-                  'bg-gray-900 text-white': location.pathname === item.to,
-                  'text-gray-300 hover:bg-gray-700 hover:text-white':
-                    location.pathname !== item.to,
-                },
-                'block rounded-md px-3 py-2 text-base font-medium',
-              )}
+              className={getMobileNavItemClasses(item.to)}
               onClick={() => setIsMenuOpen(false)} // Закрывать меню при переходе
             >
               {item.name}

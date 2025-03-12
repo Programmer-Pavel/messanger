@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
-import { axiosInstance } from '@shared/lib/axiosConfig';
+import { ROUTES } from '@shared/config/routes';
+import { useLogoutMutation } from '@features/auth';
 
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,14 +17,22 @@ export const UserMenu = () => {
     setIsMenuOpen(false);
   });
 
+  const { mutate } = useLogoutMutation();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const logout = async () => {
-    await axiosInstance.post('/auth/logout');
-    localStorage.removeItem('user');
-    navigate('/login');
+    mutate(
+      {},
+      {
+        onSuccess: () => {
+          localStorage.removeItem('user');
+          navigate(ROUTES.LOGIN);
+        },
+      },
+    );
   };
 
   return (

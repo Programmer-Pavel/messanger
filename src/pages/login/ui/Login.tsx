@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { Input } from '@shared/ui/Input';
-import { useLoginMutation } from '../api/useLoginMutation';
-import { LoginDTO, loginSchema } from '../model/schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@shared/ui/Button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import chatImg from '@assets/chat.png';
+import { LoginDTO, loginSchema, useLoginMutation } from '@features/auth';
+import { ROUTES } from '@shared/config/routes';
 
 export function Login() {
   const {
@@ -28,7 +28,7 @@ export function Login() {
   const onSubmit = handleSubmit((data) => {
     mutate(data, {
       onSuccess: () => {
-        navigate('/');
+        navigate(ROUTES.ROOT);
       },
     });
   });
@@ -62,7 +62,7 @@ export function Login() {
         <p className="mt-10 text-center text-sm/6 text-gray-500">
           Нет аккаунта?{' '}
           <Link
-            to="/signup"
+            to={ROUTES.LOGIN}
             className="font-semibold text-indigo-600 hover:text-indigo-500"
           >
             Зарегистрироваться

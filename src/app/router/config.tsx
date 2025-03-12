@@ -1,99 +1,65 @@
-import { axiosInstance } from '@shared/lib/axiosConfig';
-import { lazy, Suspense } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { LoadingFallback } from '@shared/ui/LoadingFallback';
+import { LoadingIndicator } from '@shared/ui/LoadingIndicator';
+import { Suspense } from 'react';
+import { createBrowserRouter } from 'react-router';
+import {
+  Chat,
+  Login,
+  Signup,
+  MainLayout,
+  AuthLayout,
+  NotFound,
+  Fitness,
+} from './lazyComponents';
+import { authCheck } from '@features/auth';
+import { ROUTES } from '@shared/config/routes';
 
-// Lazy loading компонентов
-const Chat = lazy(() =>
-  import('@features/Chat').then((module) => ({ default: module.Chat })),
-);
-const Login = lazy(() =>
-  import('@pages/login').then((module) => ({ default: module.Login })),
-);
-const Signup = lazy(() =>
-  import('@pages/signup').then((module) => ({ default: module.Signup })),
-);
-const MainLayout = lazy(() =>
-  import('@widgets/layouts').then((module) => ({ default: module.MainLayout })),
-);
-const AuthLayout = lazy(() =>
-  import('@widgets/layouts').then((module) => ({ default: module.AuthLayout })),
-);
-const NotFound = lazy(() =>
-  import('@pages/not-found').then((module) => ({ default: module.NotFound })),
-);
-const Fitness = lazy(() =>
-  import('@pages/fitness').then((module) => ({ default: module.Fitness })),
+// Функция для обертывания компонентов в Suspense
+const withSuspense = (Component: React.ComponentType) => (
+  <Suspense fallback={<LoadingFallback />}>
+    <Component />
+  </Suspense>
 );
 
-// Компонент загрузки
-const LoadingFallback = () => (
-  <div className="loading-spinner">Загрузка...</div>
+// Функция для создания корневого компонента с индикатором загрузки
+const withRootLayout = (Component: React.ComponentType) => (
+  <>
+    <LoadingIndicator />
+    {withSuspense(Component)}
+  </>
 );
-
-// Функция проверки аутентификации
-const authLoader = async () => {
-  await axiosInstance.get('/auth/check-auth');
-};
 
 export const router = createBrowserRouter([
   {
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <MainLayout />
-      </Suspense>
-    ),
-    path: '/',
-    loader: authLoader,
+    element: withRootLayout(MainLayout),
+    path: ROUTES.ROOT,
+    loader: authCheck,
     children: [
       {
-        path: '/chat',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Chat />
-          </Suspense>
-        ),
+        path: ROUTES.CHAT,
+        element: withSuspense(Chat),
       },
       {
-        path: '/fitness',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Fitness />
-          </Suspense>
-        ),
+        path: ROUTES.FITNESS,
+        element: withSuspense(Fitness),
       },
     ],
   },
   {
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <AuthLayout />
-      </Suspense>
-    ),
+    element: withRootLayout(AuthLayout),
     children: [
       {
-        path: '/login',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Login />
-          </Suspense>
-        ),
+        path: ROUTES.LOGIN,
+        element: withSuspense(Login),
       },
       {
-        path: '/signup',
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Signup />
-          </Suspense>
-        ),
+        path: ROUTES.SIGNUP,
+        element: withSuspense(Signup),
       },
     ],
   },
   {
-    path: '*',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <NotFound />
-      </Suspense>
-    ),
+    path: ROUTES.NOT_FOUND,
+    element: withRootLayout(NotFound),
   },
 ]);

@@ -1,6 +1,5 @@
 import type { GenerateSWOptions } from 'workbox-build';
 
-// Экспортируем типизированную конфигурацию workbox
 export const workboxConfig: Partial<GenerateSWOptions> = {
   runtimeCaching: [
     {
@@ -64,7 +63,6 @@ export const workboxConfig: Partial<GenerateSWOptions> = {
       },
     },
   ],
-  // Дополнительные настройки workbox
   skipWaiting: true,
   clientsClaim: true,
 };

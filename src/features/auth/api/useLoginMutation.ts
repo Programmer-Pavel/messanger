@@ -1,6 +1,7 @@
 import { useCustomMutation } from '@shared/hooks/useCustomMutation';
 import { axiosInstance } from '@shared/lib/axiosConfig';
-import { LoginDTO } from '../model/schema';
+import { LoginDTO } from '../model/loginSchema';
+import { API_ENDPOINTS } from '@shared/config/api';
 
 interface LoginResponse {
   message: string;
@@ -14,7 +15,7 @@ interface LoginResponse {
 export function useLoginMutation() {
   return useCustomMutation<LoginResponse, LoginDTO>(async (variables) => {
     const response = await axiosInstance.post<LoginResponse>(
-      '/auth/signin',
+      API_ENDPOINTS.AUTH.SIGNIN,
       variables,
     );
     if (response.data)

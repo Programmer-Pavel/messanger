@@ -13,22 +13,10 @@ export const manifest: Partial<ManifestOptions> = {
       purpose: 'maskable',
     },
     {
-      src: 'pwa-icons/manifest-icon-192.png',
-      sizes: '192x192',
-      type: 'image/png',
-      purpose: 'any',
-    },
-    {
       src: 'pwa-icons/manifest-icon-512.maskable.png',
       sizes: '512x512',
       type: 'image/png',
       purpose: 'maskable',
-    },
-    {
-      src: 'pwa-icons/manifest-icon-512.png',
-      sizes: '512x512',
-      type: 'image/png',
-      purpose: 'any',
     },
   ],
   start_url: '/',
