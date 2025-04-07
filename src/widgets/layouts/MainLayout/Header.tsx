@@ -11,6 +11,7 @@ export const Header = () => {
   const navigation = [
     { name: 'Chat', to: ROUTES.CHAT },
     { name: 'Fitness', to: ROUTES.FITNESS },
+    { name: 'Test', to: ROUTES.TEST_PAGE },
   ];
 
   const getNavItemClasses = (path: string) => {
@@ -68,7 +69,10 @@ export const Header = () => {
                   key={item.name}
                   className="flex items-center justify-center gap-x-6"
                 >
-                  <Link to={item.to} className={getNavItemClasses(item.to)}>
+                  <Link
+                    to={item.to}
+                    className={getNavItemClasses(item.to)}
+                  >
                     {item.name}
                   </Link>
                 </div>
@@ -145,7 +149,10 @@ export const Header = () => {
       </div>
 
       {/* Мобильное меню */}
-      <div className={mobileMenuClasses} id="mobile-menu">
+      <div
+        className={mobileMenuClasses}
+        id="mobile-menu"
+      >
         <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
           {navigation.map((item) => (
             <Link
