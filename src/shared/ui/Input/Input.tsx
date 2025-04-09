@@ -1,10 +1,4 @@
-import {
-  InputHTMLAttributes,
-  RefCallback,
-  forwardRef,
-  useRef,
-  useState,
-} from 'react';
+import { InputHTMLAttributes, RefCallback, forwardRef, useRef, useState } from 'react';
 import { Control, useController } from 'react-hook-form';
 import cn from 'classnames';
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -46,13 +40,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const controlled = control && name;
 
-    const fieldProps = controlled
-      ? useController({ name: name!, control }).field
-      : { value, onChange };
+    const fieldProps = controlled ? useController({ name: name!, control }).field : { value, onChange };
 
-    const fieldError = controlled
-      ? useController({ name: name!, control }).fieldState.error
-      : { message: error };
+    const fieldError = controlled ? useController({ name: name!, control }).fieldState.error : { message: error };
 
     const handleClear = () => {
       if (controlled) {
@@ -63,6 +53,24 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       if (inputRef.current) {
         inputRef.current.focus();
       }
+    };
+
+    const togglePassword = () => {
+      setShowPassword((prev) => !prev);
+    };
+
+    const handleRefs: RefCallback<HTMLInputElement> = (element) => {
+      if (controlled && 'ref' in fieldProps) {
+        fieldProps.ref(element);
+      }
+
+      if (typeof forwardedRef === 'function') {
+        forwardedRef(element);
+      } else if (forwardedRef) {
+        forwardedRef.current = element;
+      }
+
+      inputRef.current = element;
     };
 
     const inputClasses = cn(
@@ -85,28 +93,28 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       'text-red-500': fieldError?.message,
     });
 
-    const togglePassword = () => {
-      setShowPassword((prev) => !prev);
-    };
+    const helperTextClasses = cn('text-sm text-left', {
+      'text-red-500': fieldError?.message,
+      'text-gray-500': !fieldError?.message && helperText,
+    });
 
-    const handleRefs: RefCallback<HTMLInputElement> = (element) => {
-      if (controlled && 'ref' in fieldProps) {
-        fieldProps.ref(element);
-      }
+    const passwordToggleClasses = cn(
+      'absolute top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer',
+      {
+        'right-2': !showClearButton || !fieldProps.value,
+        'right-8': showClearButton && fieldProps.value,
+      },
+    );
 
-      if (typeof forwardedRef === 'function') {
-        forwardedRef(element);
-      } else if (forwardedRef) {
-        forwardedRef.current = element;
-      }
-
-      inputRef.current = element;
-    };
+    const containerClasses = cn('flex flex-col gap-2', containerClassName);
 
     return (
-      <div className={cn('flex flex-col gap-2', containerClassName)}>
+      <div className={containerClasses}>
         {label && (
-          <label htmlFor={props.id} className={labelClasses}>
+          <label
+            htmlFor={props.id}
+            className={labelClasses}
+          >
             {label}
           </label>
         )}
@@ -135,36 +143,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={togglePassword}
-              className={cn(
-                'absolute top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer',
-                {
-                  'right-2': !showClearButton || !fieldProps.value,
-                  'right-8': showClearButton && fieldProps.value,
-                },
-              )}
+              className={passwordToggleClasses}
             >
-              {showPassword ? (
-                <EyeSlashIcon className="h-5 w-5" />
-              ) : (
-                <EyeIcon className="h-5 w-5" />
-              )}
+              {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
             </button>
           )}
         </div>
 
         {(fieldError?.message || helperText) && (
-          <span
-            className={cn('text-sm text-left', {
-              'text-red-500': fieldError?.message,
-              'text-gray-500': !fieldError?.message && helperText,
-            })}
-          >
-            {fieldError?.message || helperText}
-          </span>
+          <span className={helperTextClasses}>{fieldError?.message || helperText}</span>
         )}
       </div>
     );
   },
 );
-
-Input.displayName = 'Input';

@@ -3,7 +3,7 @@ interface SpinnerProps {
   className?: string;
 }
 
-export const Spinner = ({ size = '1.25rem', className = '' }: SpinnerProps) => {
+export const Spinner = ({ size = '1.25rem', className = 'text-blue-600' }: SpinnerProps) => {
   // Преобразуем числовое значение в строку с единицами измерения
   const sizeValue = typeof size === 'number' ? `${size}rem` : size;
 

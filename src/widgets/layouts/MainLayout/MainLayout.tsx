@@ -3,10 +3,10 @@ import { Header } from './Header';
 
 export function MainLayout() {
   return (
-    <div className="w-full h-full bg-gray-50">
+    <div className="w-full h-full bg-gray-50 flex flex-col">
       <Header />
 
-      <main className="h-[calc(100vh-64px)] flex items-center justify-center mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+      <main className="flex-1 w-full p-5 overflow-auto scrollbar-gutter-stable">
         <Outlet />
       </main>
 

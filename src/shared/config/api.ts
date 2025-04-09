@@ -14,11 +14,12 @@ export const API_ENDPOINTS = {
   //     MESSAGES: (chatId: string) => `/chats/${chatId}/messages`,
   //   },
 
-  //   // Фитнес
-  //   FITNESS: {
-  //     WORKOUTS: '/fitness/workouts',
-  //     EXERCISES: '/fitness/exercises',
-  //   },
+  // Фитнес
+  FITNESS: {
+    GET_ALL: '/fitness/exercises',
+    CREATE: '/fitness/exercises',
+    APPROACHES: '/fitness/approaches',
+  },
 
   // Пользователи
   USERS: {

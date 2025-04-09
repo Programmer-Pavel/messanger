@@ -1,8 +1,4 @@
-import {
-  useQuery,
-  UseQueryOptions,
-  UseQueryResult,
-} from '@tanstack/react-query';
+import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
 // Типы для ключа запроса и функции получения данных
@@ -16,8 +12,6 @@ export function useCustomQuery<TQueryFnData = unknown, TData = TQueryFnData>(
   return useQuery<TQueryFnData, AxiosError, TData>({
     queryKey,
     queryFn,
-    // staleTime: 1000 * 60 * 5, // 5 минут
-    retry: 1,
     ...options,
   });
 }
