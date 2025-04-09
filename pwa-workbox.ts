@@ -1,6 +1,7 @@
 import type { GenerateSWOptions } from 'workbox-build';
 
 export const workboxConfig: Partial<GenerateSWOptions> = {
+  maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4 МБ
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/server-for-messenger\.onrender\.com\/.*/i,
