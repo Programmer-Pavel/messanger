@@ -1,25 +1,24 @@
 import { useCustomMutation } from '@shared/hooks/useCustomMutation';
 import { axiosInstance } from '@shared/lib/axiosConfig';
-import { LoginDTO } from '../model/loginSchema';
 import { API_ENDPOINTS } from '@shared/config/api';
+import { useUserStore } from '../model/userStore';
+import { LoginDTO, User } from '../model/types';
 
 interface LoginResponse {
   message: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
+  user: User;
 }
 
 export function useLoginMutation() {
+  const setUser = useUserStore((state) => state.setUser);
+
   return useCustomMutation<LoginResponse, LoginDTO>(async (variables) => {
-    const response = await axiosInstance.post<LoginResponse>(
-      API_ENDPOINTS.AUTH.SIGNIN,
-      variables,
-    );
-    if (response.data)
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+    const response = await axiosInstance.post<LoginResponse>(API_ENDPOINTS.AUTH.SIGNIN, variables);
+
+    if (response.data.user) {
+      setUser(response.data.user);
+    }
+
     return response.data;
   });
 }

@@ -3,7 +3,7 @@ import { Input } from '@shared/ui/Input/Input';
 import { Button } from '@shared/ui/Button/Button';
 import { AddExerciseFormData } from '@pages/fitness/model/types';
 import { useAddExerciseMutation } from '@pages/fitness/api/useAddExerciseMutation';
-import { useState } from 'react';
+import { useUserStore } from '@features/auth';
 
 export const AddExerciseForm = () => {
   const {
@@ -19,10 +19,7 @@ export const AddExerciseForm = () => {
     mode: 'onChange',
   });
 
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const user = useUserStore((state) => state.user);
 
   const { mutate, isPending } = useAddExerciseMutation();
 
@@ -34,12 +31,12 @@ export const AddExerciseForm = () => {
 
   const onSubmit = handleSubmit((data) => {
     // Дополнительная проверка на пустое значение перед отправкой
-    if (!data.name.trim() || !userData.id) return;
+    if (!data.name.trim() || !user?.id) return;
 
     mutate(
       {
         name: data.name,
-        userId: userData.id,
+        userId: user?.id,
       },
       {
         onSuccess: () => {

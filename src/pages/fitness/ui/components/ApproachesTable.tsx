@@ -1,29 +1,18 @@
 import { useDeleteApproachMutation } from '@pages/fitness/api/useDeleteApproachMutation';
-import { useGetApproachesByExerciseIdQuery } from '@pages/fitness/api/useGetApproachesByExerciseIdQuery';
-import { Spinner } from '@shared/ui/Spinner';
 import { formatDate } from '@shared/lib/formatDate';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import { ApproachModel } from '@pages/fitness/model/types';
 
-interface SetsTableProps {
-  selectedExerciseId?: string;
+interface ApproachesTableProps {
+  approaches?: ApproachModel[];
 }
 
-export const SetsTable: React.FC<SetsTableProps> = ({ selectedExerciseId }) => {
-  const { data: approaches, isFetching } = useGetApproachesByExerciseIdQuery(selectedExerciseId);
-
+export const ApproachesTable = ({ approaches }: ApproachesTableProps) => {
   const { mutate: deleteApproach, isPending } = useDeleteApproachMutation();
 
   const handleDeleteApproach = (id: string) => {
     deleteApproach(id);
   };
-
-  if (isFetching) {
-    return (
-      <div className="flex items-center justify-center h-40">
-        <Spinner size={2} />
-      </div>
-    );
-  }
 
   if (approaches?.length === 0) {
     return <p className="text-gray-500 italic">Нет добавленных подходов</p>;
@@ -35,9 +24,18 @@ export const SetsTable: React.FC<SetsTableProps> = ({ selectedExerciseId }) => {
         <thead>
           <tr className="bg-gray-50">
             <th className="py-1 px-2 border-b text-center">№</th>
-            <th className="py-1 px-2 border-b text-center">Повторения</th>
-            <th className="py-1 px-2 border-b text-center">Вес (кг)</th>
-            <th className="py-1 px-2 border-b text-center">Дата</th>
+            <th className="py-1 px-2 border-b text-center">
+              <span className="hidden sm:inline">Повторения</span>
+              <span className="sm:hidden">Повт.</span>
+            </th>
+            <th className="py-1 px-2 border-b text-center">
+              <span className="hidden sm:inline">Вес (кг)</span>
+              <span className="sm:hidden">Вес</span>
+            </th>
+            <th className="py-1 px-2 border-b text-center">
+              <span className="hidden sm:inline">Дата</span>
+              <span className="sm:hidden">Дата</span>
+            </th>
             <th className="py-1 px-2 border-b text-center"></th>
           </tr>
         </thead>

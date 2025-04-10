@@ -1,20 +1,42 @@
 import { useGetExercisesByUserIdQuery } from '@pages/fitness/api/useGetExercisesByUserIdQuery';
 import { ExerciseModel } from '@pages/fitness/model/types';
 import { Spinner } from '@shared/ui/Spinner';
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { AddApproachForm } from './AddApproachForm';
+import { ApproachesTable } from './ApproachesTable';
+import classNames from 'classnames';
+import { useUserStore } from '@features/auth';
 
-interface ExercisesListProps {
-  selectedExerciseId?: string;
-  onSelectExercise: (exercise: ExerciseModel) => void;
-}
+export const ExercisesList = () => {
+  const user = useUserStore((state) => state.user);
 
-export const ExercisesList: React.FC<ExercisesListProps> = ({ selectedExerciseId, onSelectExercise }) => {
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [selectedExercise, setSelectedExercise] = useState<ExerciseModel | undefined>(undefined);
 
-  const { data: exercisesByUserId, isFetching } = useGetExercisesByUserIdQuery(parseInt(userData?.id));
+  const handleSelectExercise = (exercise: ExerciseModel) => {
+    setSelectedExercise(exercise);
+  };
+
+  const { data: exercisesByUserId, isFetching } = useGetExercisesByUserIdQuery(user ? user.id : undefined);
+
+  // Обновляем selectedExercise при изменении данных exercisesByUserId
+  useEffect(() => {
+    if (exercisesByUserId && selectedExercise) {
+      // Находим обновленную версию выбранного упражнения
+      const updatedExercise = exercisesByUserId.find((exercise) => exercise.id === selectedExercise.id);
+
+      // Если упражнение найдено, обновляем его
+      if (updatedExercise) {
+        setSelectedExercise(updatedExercise);
+      }
+    }
+  }, [exercisesByUserId, selectedExercise]);
+
+  const getExerciseItemClasses = (isSelected: boolean) => {
+    return classNames('p-3 rounded-md cursor-pointer transition-colors border', {
+      'bg-blue-100 border-l-4 border-blue-500 shadow-md': isSelected,
+      'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm': !isSelected,
+    });
+  };
 
   if (isFetching) {
     return (
@@ -29,20 +51,32 @@ export const ExercisesList: React.FC<ExercisesListProps> = ({ selectedExerciseId
   }
 
   return (
-    <ul className="space-y-2">
-      {exercisesByUserId.map((exercise) => (
-        <li
-          key={exercise.id}
-          className={`p-3 rounded-md cursor-pointer transition-colors ${
-            selectedExerciseId === exercise.id
-              ? 'bg-blue-100 border-l-4 border-blue-500'
-              : 'bg-gray-50 hover:bg-gray-100'
-          }`}
-          onClick={() => onSelectExercise(exercise)}
-        >
-          {exercise.name} <span className="text-gray-500">({(exercise as any).sets?.length || 0} подходов)</span>
-        </li>
-      ))}
-    </ul>
+    <>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-700 mb-3">Мои упражнения</h2>
+        <ul className="space-y-2">
+          {exercisesByUserId.map((exercise) => (
+            <li
+              key={exercise.id}
+              className={getExerciseItemClasses(selectedExercise?.id === exercise.id)}
+              onClick={() => handleSelectExercise(exercise)}
+            >
+              <div className="font-medium">{exercise.name}</div>
+              <div className="text-sm text-gray-500">{exercise.approaches?.length || 0} подходов</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {selectedExercise && (
+        <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-700 mb-3">Подходы для "{selectedExercise.name}"</h2>
+
+          <AddApproachForm exerciseId={selectedExercise.id} />
+
+          <ApproachesTable approaches={selectedExercise?.approaches} />
+        </div>
+      )}
+    </>
   );
 };

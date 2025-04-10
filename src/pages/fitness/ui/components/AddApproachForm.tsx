@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
-import { Input } from '@shared/ui/Input/Input';
-import { Button } from '@shared/ui/Button/Button';
-import { AddApproachFormData, ApproachFormData } from '@pages/fitness/model/types';
+import { Button } from '@shared/ui/Button';
+import { Input } from '@shared/ui/Input';
 import { useAddApproachMutation } from '@pages/fitness/api/useAddApproachMutation';
-import { useState } from 'react';
+import { AddApproachFormData, ApproachFormData } from '@pages/fitness/model/types';
+import { useUserStore } from '@features/auth';
 
 interface AddApproachFormProps {
   exerciseId: string;
@@ -24,10 +24,7 @@ export const AddApproachForm: React.FC<AddApproachFormProps> = ({ exerciseId }) 
     mode: 'onChange',
   });
 
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const user = useUserStore((state) => state.user);
 
   const { mutate, isPending } = useAddApproachMutation();
 
@@ -37,13 +34,13 @@ export const AddApproachForm: React.FC<AddApproachFormProps> = ({ exerciseId }) 
   const isFormEmpty = !repsValue || !weightValue;
 
   const onSubmit = handleSubmit((data) => {
-    if (!userData?.id) return;
+    if (!user?.id) return;
 
     const approachData: ApproachFormData = {
       reps: Number(data.reps),
       weight: Number(data.weight),
       exerciseId,
-      userId: userData.id,
+      userId: user.id,
     };
 
     mutate(approachData, {

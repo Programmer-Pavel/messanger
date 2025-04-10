@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Существующие схемы
 const exerciseSchema = z.object({
   name: z.string(),
   userId: z.number(),
@@ -28,6 +27,7 @@ export interface ExerciseModel {
   name: string;
   userId: number;
   createdAt: string;
+  approaches: ApproachModel[];
 }
 
 export interface ApproachModel {

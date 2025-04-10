@@ -14,7 +14,7 @@ export function useAddApproachMutation() {
     {
       onSuccess: (data) => {
         queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.FITNESS.APPROACHES_BY_EXERCISE_ID(data.exerciseId),
+          queryKey: QUERY_KEYS.FITNESS.EXERCISES_BY_USER_ID(data.userId),
         });
       },
     },
