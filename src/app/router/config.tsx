@@ -5,6 +5,7 @@ import { createBrowserRouter } from 'react-router';
 import { Chat, Login, Signup, MainLayout, AuthLayout, NotFound, Fitness, TestPage } from './lazyComponents';
 import { authCheck } from '@features/auth';
 import { ROUTES } from '@shared/config/routes';
+import { RouterErrorBoundary } from '@shared/ui/ErrorBoundary';
 
 // Функция для обертывания компонентов в Suspense
 const withSuspense = (Component: React.ComponentType) => (
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
   {
     element: withRootLayout(MainLayout),
     path: ROUTES.ROOT,
+    errorElement: <RouterErrorBoundary />,
     loader: authCheck,
     children: [
       {
@@ -43,6 +45,7 @@ export const router = createBrowserRouter([
   },
   {
     element: withRootLayout(AuthLayout),
+    errorElement: <RouterErrorBoundary />,
     children: [
       {
         path: ROUTES.LOGIN,
@@ -56,6 +59,7 @@ export const router = createBrowserRouter([
   },
   {
     path: ROUTES.NOT_FOUND,
+    errorElement: <RouterErrorBoundary />,
     element: withRootLayout(NotFound),
   },
 ]);

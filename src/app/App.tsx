@@ -4,14 +4,17 @@ import { RouterProvider } from 'react-router/dom';
 import { router } from './router/config';
 import { InstallPrompt } from '@widgets/pwa';
 import { queryClient } from '@shared/lib/queryClient';
+import { ErrorBoundary } from '@shared/ui/ErrorBoundary';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <InstallPrompt />
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <InstallPrompt />
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
