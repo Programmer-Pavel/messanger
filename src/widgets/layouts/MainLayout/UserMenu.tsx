@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
 import { ROUTES } from '@shared/config/routes';
-import { useLogoutMutation } from '@features/auth';
+import { useLogoutMutation, useUserStore } from '@features/auth';
 
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [userData] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
-  });
+
+  const user = useUserStore((state) => state.user);
 
   const navigate = useNavigate();
 
@@ -36,7 +34,10 @@ export const UserMenu = () => {
   };
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div
+      className="relative"
+      ref={menuRef}
+    >
       <button
         className="flex items-center gap-2 text-gray-300 hover:text-white cursor-pointer"
         onClick={toggleMenu}
@@ -46,7 +47,7 @@ export const UserMenu = () => {
           src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
           alt="Аватар пользователя"
         />
-        <span>{userData?.name}</span>
+        <span>{user?.name}</span>
       </button>
 
       {isMenuOpen && (
