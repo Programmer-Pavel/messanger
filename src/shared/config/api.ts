@@ -7,13 +7,6 @@ export const API_ENDPOINTS = {
     CHECK_AUTH: '/auth/check-auth',
   },
 
-  //   // Чаты
-  //   CHAT: {
-  //     GET_ALL: '/chats',
-  //     GET_BY_ID: (id: string) => `/chats/${id}`,
-  //     MESSAGES: (chatId: string) => `/chats/${chatId}/messages`,
-  //   },
-
   // Фитнес
   FITNESS: {
     GET_ALL: '/fitness/exercises',

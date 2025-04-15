@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@shared/ui/Button';
 import { PhoneIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
 import { useSocket } from '@shared/hooks/useSocket';
@@ -26,7 +26,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   // Функция для применения накопленных ICE кандидатов
-  const applyPendingIceCandidates = useCallback(async () => {
+  const applyPendingIceCandidates = async () => {
     if (!peerConnectionRef.current || !peerConnectionRef.current.remoteDescription) {
       console.log('Невозможно применить ICE кандидаты: remoteDescription не установлен');
       return;
@@ -43,12 +43,11 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
 
       pendingCandidatesRef.current = [];
     }
-  }, []);
+  };
 
   // Инициализация медиа потока
   const initializeMedia = async () => {
     try {
-      console.log('Получение медиа-потока...');
       const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
       // Сохраняем поток в ref
@@ -56,29 +55,10 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
 
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
-      } else {
-        console.error('localVideoRef не инициализирован');
       }
       return stream;
     } catch (error) {
-      if (error instanceof DOMException) {
-        if (error.name === 'NotFoundError') {
-          console.error('Ошибка: Камера или микрофон не найдены.');
-          alert('Для видеозвонка требуется камера и микрофон. Пожалуйста, подключите устройства и разрешите доступ.');
-        } else if (error.name === 'NotAllowedError') {
-          console.error('Ошибка: Доступ к камере/микрофону запрещен пользователем.');
-          alert('Для видеозвонка требуется разрешение на использование камеры и микрофона.');
-        } else if (error.name === 'NotReadableError') {
-          console.error('Ошибка: Устройства заняты другим приложением.');
-          alert('Камера или микрофон уже используются другим приложением. Закройте его и попробуйте снова.');
-        } else {
-          console.error('Ошибка доступа к медиа устройствам:', error.name, error.message);
-          alert('Произошла ошибка при подключении к камере/микрофону.');
-        }
-      } else {
-        console.error('Неизвестная ошибка при доступе к медиа устройствам:', error);
-        alert('Произошла неизвестная ошибка при подготовке к видеозвонку.');
-      }
+      console.error('Ошибка при доступе к медиа устройствам:', error);
       return null;
     }
   };
@@ -220,9 +200,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
     setIsIncomingCall(false);
   };
 
-  // Завершение звонка (оборачиваем в useCallback)
-  const endCall = useCallback(() => {
-    // Исправляем логику определения ID пользователя, которому отправляем сигнал завершения
+  // Завершение звонка
+  const endCall = () => {
     const targetUserId = selectedUser?.id || callerId;
 
     if (socket && targetUserId) {
@@ -269,17 +248,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
     setCallerId(''); // Сбрасываем ID звонящего
     setCallerName(''); // Сбрасываем имя звонящего
     setIncomingOffer(null); // Сбрасываем offer
-  }, [
-    socket,
-    selectedUser,
-    callerId,
-    isCallActive,
-    setIsCallActive,
-    setIsIncomingCall,
-    setCallerId,
-    setCallerName,
-    setIncomingOffer,
-  ]); // Добавляем зависимости useCallback
+  };
 
   useEffect(() => {
     if (!socket || !currentUser?.id) return;
@@ -297,24 +266,10 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
       fromName: string;
     }) => {
       console.log('incoming-call от', fromName);
-      // Проверяем, не идет ли уже активный звонок
-      if (isCallActive) {
-        console.log('Отклоняем входящий звонок, так как уже идет другой звонок.');
-        // Опционально: отправить сигнал отклонения звонящему
-        socket.emit('decline-call', { to: from });
-        return;
-      }
       setIsIncomingCall(true);
       setIncomingOffer(offer);
       setCallerId(from);
       setCallerName(fromName);
-    };
-
-    // Обработка состояния "пользователь занят"
-    const handleUserBusy = ({ userId }: { userId: string }) => {
-      console.log(`Пользователь ${userId} занят в другом звонке`);
-      alert(`Пользователь сейчас занят в другом звонке. Попробуйте позже.`);
-      endCall(); // Завершаем наш звонок и очищаем ресурсы
     };
 
     // Обработка принятия звонка
@@ -364,7 +319,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
     socket.on('call-declined', handleCallDeclined);
     socket.on('call-ended', handleCallEnded);
     socket.on('ice-candidate', handleIceCandidate);
-    socket.on('user-busy', handleUserBusy);
+    // socket.on('user-busy', handleUserBusy);
 
     return () => {
       socket.off('incoming-call', handleIncomingCall);
@@ -372,22 +327,19 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
       socket.off('call-declined', handleCallDeclined);
       socket.off('call-ended', handleCallEnded);
       socket.off('ice-candidate', handleIceCandidate);
-      socket.off('user-busy', handleUserBusy);
+      //  socket.off('user-busy', handleUserBusy);
     };
-    // Добавляем endCall в зависимости, так как он используется в обработчиках
-    // Добавляем isCallActive для проверки в handleIncomingCall
-  }, [socket, currentUser, endCall, isCallActive, applyPendingIceCandidates]);
+  }, [socket, currentUser]);
 
   // Эффект для очистки при размонтировании
   useEffect(() => {
     return () => {
       // Вызываем endCall при размонтировании, если был активен звонок или медиа/peer ресурсы
       if (isCallActive || localStreamRef.current || peerConnectionRef.current) {
-        console.log('Компонент VideoCall размонтируется, вызываем endCall...');
         endCall();
       }
     };
-  }, [endCall, isCallActive]); // Зависим от endCall и isCallActive
+  }, [isCallActive]);
 
   return (
     <>

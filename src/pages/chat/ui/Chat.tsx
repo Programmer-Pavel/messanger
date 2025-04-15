@@ -3,7 +3,7 @@ import { Input } from '@shared/ui/Input';
 import { useEffect, useState } from 'react';
 import { useGetUsers } from '../api/useGetAllUsers';
 import cn from 'classnames';
-import { useSocket } from '@shared/hooks/useSocket';
+// import { useSocket } from '@shared/hooks/useSocket';
 import { User, useUserStore } from '@features/auth';
 import { VideoCall } from './VideoCall';
 
@@ -30,7 +30,7 @@ export const Chat = () => {
 
   const { data: allUsers = [] } = useGetUsers();
 
-  const socket = useSocket();
+  // const socket = useSocket();
 
   useEffect(() => {
     if (allUsers.length > 0) {
