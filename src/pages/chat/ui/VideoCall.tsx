@@ -1,22 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@shared/ui/Button';
 import { PhoneIcon, VideoCameraIcon } from '@heroicons/react/24/outline';
-import { useSocket } from '@shared/hooks/useSocket';
-import { User } from '@features/auth';
+import { User, useUserStore } from '@features/auth';
+import { useAuthenticatedSocket } from '@features/socket';
 
 interface VideoCallProps {
-  selectedUser: User | null;
-  currentUser: User | null;
+  selectedUser?: User;
 }
 
-export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser }) => {
-  const socket = useSocket();
-
+export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser }) => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [isIncomingCall, setIsIncomingCall] = useState(false);
   const [callerName, setCallerName] = useState('');
   const [callerId, setCallerId] = useState('');
   const [incomingOffer, setIncomingOffer] = useState<RTCSessionDescriptionInit | null>(null);
+
+  const user = useUserStore((state) => state.user);
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -24,6 +23,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
   const remoteStreamRef = useRef<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+
+  const socket = useAuthenticatedSocket();
 
   // Функция для применения накопленных ICE кандидатов
   const applyPendingIceCandidates = async () => {
@@ -117,7 +118,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
 
   // Инициирование звонка
   const initiateCall = async () => {
-    if (!selectedUser || !socket || !currentUser) return;
+    if (!selectedUser || !socket || !user) return;
 
     setIsCallActive(true);
 
@@ -139,8 +140,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
       socket.emit('call-user', {
         offer,
         to: selectedUser.id,
-        from: currentUser.id,
-        fromName: currentUser.name,
+        from: user.id,
+        fromName: user.name,
       });
     } catch (error) {
       console.error('Ошибка при инициировании звонка:', error);
@@ -251,9 +252,9 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
   };
 
   useEffect(() => {
-    if (!socket || !currentUser?.id) return;
+    if (!socket || !user?.id) return;
 
-    socket.emit('joinRoom', { userId: currentUser.id }); // Используем currentUser.id
+    socket.emit('joinRoom', { userId: user.id });
 
     // Обработка входящего звонка
     const handleIncomingCall = ({
@@ -319,7 +320,6 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
     socket.on('call-declined', handleCallDeclined);
     socket.on('call-ended', handleCallEnded);
     socket.on('ice-candidate', handleIceCandidate);
-    // socket.on('user-busy', handleUserBusy);
 
     return () => {
       socket.off('incoming-call', handleIncomingCall);
@@ -327,9 +327,8 @@ export const VideoCall: React.FC<VideoCallProps> = ({ selectedUser, currentUser 
       socket.off('call-declined', handleCallDeclined);
       socket.off('call-ended', handleCallEnded);
       socket.off('ice-candidate', handleIceCandidate);
-      //  socket.off('user-busy', handleUserBusy);
     };
-  }, [socket, currentUser]);
+  }, [socket, user]);
 
   // Эффект для очистки при размонтировании
   useEffect(() => {

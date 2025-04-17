@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link } from 'react-router';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
-import { ROUTES } from '@shared/config/routes';
 import { useLogoutMutation, useUserStore } from '@features/auth';
 
 export const UserMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const user = useUserStore((state) => state.user);
-
-  const navigate = useNavigate();
 
   const menuRef = useClickOutside<HTMLDivElement>(() => {
     setIsMenuOpen(false);
@@ -22,15 +19,7 @@ export const UserMenu = () => {
   };
 
   const logout = async () => {
-    mutate(
-      {},
-      {
-        onSuccess: () => {
-          localStorage.removeItem('user');
-          navigate(ROUTES.LOGIN);
-        },
-      },
-    );
+    mutate({});
   };
 
   return (

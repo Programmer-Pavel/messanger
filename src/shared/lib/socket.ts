@@ -67,5 +67,5 @@ class SocketService {
     }
   }
 }
-export const socket = SocketService.getInstance();
+export const getSocketInstance = SocketService.getInstance;
 export const closeSocket = SocketService.closeConnection;
