@@ -1,6 +1,6 @@
 import { Button } from '@shared/ui/Button';
 import { Input } from '@shared/ui/Input';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useGetUsers } from '../api/useGetAllUsers';
 import cn from 'classnames';
 import { User, useUserStore } from '@features/auth';
@@ -30,7 +30,6 @@ interface MessageNotification {
 export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [unreadMessages, setUnreadMessages] = useState<number[]>([]);
 
@@ -39,13 +38,6 @@ export const Chat = () => {
   const { data: allUsers = [] } = useGetUsers();
 
   const socket = useAuthenticatedSocket();
-
-  useEffect(() => {
-    if (allUsers.length > 0) {
-      const filtered = allUsers.filter((el) => el.id !== currentUser?.id);
-      setUsers(filtered);
-    }
-  }, [allUsers, currentUser]);
 
   useEffect(() => {
     if (!socket) return;
@@ -84,6 +76,14 @@ export const Chat = () => {
       socket.off('privateChat', handlePrivateChat);
     };
   }, [socket, selectedUser]);
+
+  const users = useMemo(() => {
+    if (allUsers.length > 0) {
+      return allUsers.filter((el) => el.id !== currentUser?.id);
+    }
+
+    return [];
+  }, [allUsers]);
 
   const sendMessage = () => {
     if (!socket || !currentUser || !messageInput.trim() || !selectedUser) return;
@@ -232,7 +232,7 @@ export const Chat = () => {
                     type="text"
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                     placeholder="Введите сообщение..."
                     className="flex-1"
                     containerClassName="w-full"

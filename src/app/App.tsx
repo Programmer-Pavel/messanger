@@ -5,6 +5,7 @@ import { router } from './router/config';
 import { InstallPrompt } from '@widgets/pwa';
 import { queryClient } from '@shared/lib/queryClient';
 import { ErrorBoundary } from '@shared/ui/ErrorBoundary';
+import { GlobalCallHandler } from '@features/call';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <InstallPrompt />
         <RouterProvider router={router} />
         <Toaster />
+        <GlobalCallHandler />
       </QueryClientProvider>
     </ErrorBoundary>
   );
