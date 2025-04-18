@@ -12,7 +12,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, variant = 'primary', fullWidth, isLoading, className, disabled, ...props }, ref) => {
     const buttonVariants = {
       primary: 'bg-indigo-600 text-white hover:bg-indigo-500',
-      secondary: 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50',
+      secondary: 'bg-white text-gray-900 hover:bg-gray-50',
       danger: 'bg-red-600 text-white hover:bg-red-500',
     };
 

@@ -115,7 +115,6 @@ export const Chat = () => {
     }
   };
 
-  // Функция для определения классов элемента пользователя
   const getUserItemClasses = (user: User) => {
     const isActiveUser = selectedUser?.id === user.id;
     const hasUnreadMessages = unreadMessages.includes(user.id);
@@ -125,14 +124,13 @@ export const Chat = () => {
       'bg-blue-100 border-l-4 border-blue-500': isActiveUser,
 
       // Неактивное состояние с непрочитанными сообщениями
-      'bg-yellow-50 border-l-4 border-yellow-400': hasUnreadMessages && !isActiveUser,
+      'bg-yellow-50 hover:bg-yellow-100': hasUnreadMessages && !isActiveUser,
 
       // Обычное неактивное состояние (Вариант 3)
       'bg-indigo-50 hover:bg-indigo-100': !hasUnreadMessages && !isActiveUser,
     });
   };
 
-  // Функция для определения классов имени пользователя
   const getUserNameClasses = (user: User) => {
     const isActiveUser = selectedUser?.id === user.id;
     const hasUnreadMessages = unreadMessages.includes(user.id);
@@ -144,7 +142,6 @@ export const Chat = () => {
     });
   };
 
-  // // Функция для определения классов статуса онлайн
   // const getOnlineStatusClasses = (isOnline: boolean) => {
   //   return cn('w-2 h-2 rounded-full', {
   //     'bg-green-500': isOnline,
@@ -152,7 +149,6 @@ export const Chat = () => {
   //   });
   // };
 
-  // Функция для определения классов сообщения
   const getMessageClasses = (messageUserId: number) => {
     return cn('mb-4', {
       'text-right': messageUserId === currentUser?.id,
@@ -160,7 +156,6 @@ export const Chat = () => {
     });
   };
 
-  // Функция для определения классов блока текста сообщения
   const getMessageTextClasses = (messageUserId: number) => {
     return cn('inline-block p-3 rounded-lg max-w-[70%]', {
       'bg-blue-500 text-white': messageUserId === currentUser?.id,
