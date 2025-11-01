@@ -5,9 +5,7 @@ import { useEffect, useRef, RefObject } from 'react';
  * @param callback Функция, которая будет вызвана при клике вне элемента
  * @returns Ref, который нужно привязать к элементу
  */
-export function useClickOutside<T extends HTMLElement = HTMLElement>(
-  callback: () => void,
-): RefObject<T> {
+export function useClickOutside<T extends HTMLElement = HTMLElement>(callback: () => void): RefObject<T> {
   const ref = useRef<T>(null);
 
   useEffect(() => {

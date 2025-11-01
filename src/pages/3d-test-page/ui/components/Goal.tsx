@@ -22,6 +22,7 @@ export const Goal = ({
   const [showGoalText, setShowGoalText] = useState(false);
 
   // Обработчик попадания мяча в ворота
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleIntersectionEnter = (e: any) => {
     // Проверяем, что пересечение вызвал именно мяч
     if (e.other.rigidBodyObject.name === 'ball') {
@@ -40,7 +41,7 @@ export const Goal = ({
       {/* Рамка ворот */}
       <group
         position={position}
-        rotation={rotation as any}
+        rotation={rotation}
       >
         {/* Верхняя перекладина */}
         <RigidBody

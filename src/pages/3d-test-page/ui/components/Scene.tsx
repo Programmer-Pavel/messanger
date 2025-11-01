@@ -8,8 +8,8 @@ import { Goal } from './Goal';
 import { useRef } from 'react';
 
 interface Scene {
-  setScore1: (score: any) => void;
-  setScore2: (score: any) => void;
+  setScore1: (score: unknown) => void;
+  setScore2: (score: unknown) => void;
 }
 
 export const Scene = ({ setScore1, setScore2 }: Scene) => {

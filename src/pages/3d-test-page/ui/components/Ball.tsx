@@ -1,11 +1,11 @@
-import { RigidBody, RigidBodyOptions } from '@react-three/rapier';
+import { RapierRigidBody, RigidBody, RigidBodyOptions } from '@react-three/rapier';
 
-interface Ball {
-  ballRef: any;
+interface BallProps {
+  ballRef: React.RefObject<RapierRigidBody | null>;
   position: RigidBodyOptions['position'];
 }
 
-export const Ball = ({ ballRef, position }: any) => {
+export const Ball = ({ ballRef, position }: BallProps) => {
   return (
     <RigidBody
       ref={ballRef}

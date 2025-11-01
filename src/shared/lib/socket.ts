@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 class SocketService {
   private static instance: Socket;
   private static isOffline: boolean = false;
-  private static pendingMessages: Array<{ event: string; data: any }> = [];
+  private static pendingMessages: Array<{ event: string; data: unknown }> = [];
 
   public static getInstance(): Socket {
     if (!SocketService.instance) {
@@ -48,7 +48,7 @@ class SocketService {
     }
   }
 
-  public static emit(event: string, data: any): void {
+  public static emit(event: string, data: unknown): void {
     if (SocketService.isOffline) {
       // Сохраняем сообщения для последующей отправки, если офлайн
       SocketService.pendingMessages.push({ event, data });

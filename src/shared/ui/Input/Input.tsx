@@ -1,5 +1,5 @@
-import { InputHTMLAttributes, RefCallback, forwardRef, useRef, useState } from 'react';
-import { Control, useController } from 'react-hook-form';
+import { ChangeEvent, InputHTMLAttributes, RefCallback, forwardRef, useRef, useState } from 'react';
+import { Control, FieldValues, useController } from 'react-hook-form';
 import cn from 'classnames';
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
@@ -10,7 +10,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
   showPasswordToggle?: boolean;
   showClearButton?: boolean;
-  control?: Control<any>;
+  control?: Control<FieldValues>;
   name?: string;
   error?: string;
 }
@@ -40,15 +40,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const controlled = control && name;
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const fieldProps = controlled ? useController({ name: name!, control }).field : { value, onChange };
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const fieldError = controlled ? useController({ name: name!, control }).fieldState.error : { message: error };
 
     const handleClear = () => {
       if (controlled) {
-        fieldProps.onChange?.({ target: { value: '' } } as any);
+        fieldProps.onChange?.({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
       } else if (onChange) {
-        onChange({ target: { value: '' } } as any);
+        onChange({ target: { value: '' } } as ChangeEvent<HTMLInputElement>);
       }
       if (inputRef.current) {
         inputRef.current.focus();

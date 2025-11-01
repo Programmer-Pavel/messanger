@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { useKeyboardControls } from '../../hooks/useKeyboardControls';
 
 interface ControlledBoxProps {
-  ballRef: any;
+  ballRef: React.RefObject<RapierRigidBody | null>;
   position?: RigidBodyOptions['position'];
 }
 
