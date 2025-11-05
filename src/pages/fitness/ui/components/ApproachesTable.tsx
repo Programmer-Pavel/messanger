@@ -1,6 +1,6 @@
 import { useDeleteApproachMutation } from '@pages/fitness/api/useDeleteApproachMutation';
 import { formatDate } from '@shared/lib/formatDate';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { Trash } from 'lucide-react';
 import { ApproachModel } from '@pages/fitness/model/types';
 
 interface ApproachesTableProps {
@@ -56,7 +56,7 @@ export const ApproachesTable = ({ approaches }: ApproachesTableProps) => {
                   className="text-red-500 hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50 inline-flex items-center justify-center cursor-pointer"
                   title="Удалить подход"
                 >
-                  <TrashIcon className="h-5 w-5" />
+                  <Trash className="h-5 w-5" />
                 </button>
               </td>
             </tr>

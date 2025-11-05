@@ -1,7 +1,7 @@
 import { ChangeEvent, InputHTMLAttributes, RefCallback, forwardRef, useRef, useState } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
-import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/lib/utils';
+import { Eye, EyeOff, X } from 'lucide-react';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -137,7 +137,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={handleClear}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
             >
-              <XMarkIcon className="h-5 w-5" />
+              <X className="h-5 w-5" />
             </button>
           )}
 
@@ -147,7 +147,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               onClick={togglePassword}
               className={passwordToggleClasses}
             >
-              {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+              {showPassword ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
             </button>
           )}
         </div>

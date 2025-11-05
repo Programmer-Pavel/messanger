@@ -5,8 +5,8 @@ import { useGetUsers } from '../api/useGetAllUsers';
 import { User, useUserStore } from '@features/auth';
 import { VideoCall } from './VideoCall';
 import { useAuthenticatedSocket } from '@features/socket';
-import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import { cn } from '@/shared/lib/utils';
+import { MessagesSquare } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -246,7 +246,7 @@ export const Chat = () => {
             ) : (
               // Пустое состояние чата - когда пользователь не выбран
               <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-                <ChatBubbleOvalLeftEllipsisIcon className="w-20 h-20 text-gray-400 mb-4" />
+                <MessagesSquare className="w-20 h-20 text-gray-400 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">Выберите пользователя для начала чата</h3>
                 <p className="text-gray-500 max-w-md">
                   Выберите пользователя из списка слева, чтобы начать общение или продолжить существующий диалог.

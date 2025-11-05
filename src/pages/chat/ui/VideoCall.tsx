@@ -1,5 +1,5 @@
 import { Button } from '@shared/ui/Button';
-import { VideoCameraIcon } from '@heroicons/react/24/outline';
+import { Video } from 'lucide-react';
 import { User, useUserStore } from '@features/auth';
 import { useAuthenticatedSocket } from '@features/socket';
 import { useCallStore } from '@features/call';
@@ -65,7 +65,7 @@ export const VideoCall = ({ selectedUser }: VideoCallProps) => {
       disabled={!selectedUser}
       className="px-6"
     >
-      <VideoCameraIcon className="h-5 w-5" />
+      <Video className="h-5 w-5" />
     </Button>
   );
 };

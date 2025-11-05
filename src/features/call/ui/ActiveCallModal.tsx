@@ -1,8 +1,8 @@
 import { Button } from '@shared/ui/Button';
-import { PhoneIcon } from '@heroicons/react/24/outline';
 import { useCallStore } from '../model/callStore';
 import { useAuthenticatedSocket } from '@features/socket';
 import { useEffect, useRef } from 'react';
+import { Phone } from 'lucide-react';
 
 export const ActiveCallModal = () => {
   const socket = useAuthenticatedSocket();
@@ -74,7 +74,7 @@ export const ActiveCallModal = () => {
             onClick={endCall}
             className="bg-red-500 hover:bg-red-600 rounded-full px-3.5 py-3.5"
           >
-            <PhoneIcon className="h-6 w-6" />
+            <Phone className="h-6 w-6" />
           </Button>
         </div>
       </div>

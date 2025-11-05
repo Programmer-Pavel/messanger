@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuthenticatedSocket } from '@features/socket';
 import { MessageNotification, useNotificationsStore } from '../model/notificationsStore';
-import { BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Bell, Trash } from 'lucide-react';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
 import { formatRelativeTime } from '@shared/lib/formatDate';
 import React from 'react';
@@ -69,7 +69,7 @@ export const Notifications = () => {
       ref={dropdownRef}
     >
       <IconButton
-        icon={BellIcon}
+        icon={Bell}
         onClick={toggleNotifications}
         variant="primary"
         size="sm"
@@ -122,7 +122,7 @@ export const Notifications = () => {
                     </div>
                     <div className="mt-1 flex justify-end">
                       <IconButton
-                        icon={XMarkIcon}
+                        icon={Trash}
                         onClick={handleRemoveNotification(notification)}
                         variant="secondary"
                         size="sm"
@@ -135,7 +135,7 @@ export const Notifications = () => {
             ) : (
               <div className="p-8 text-center">
                 <div className="text-indigo-300 mb-2">
-                  <BellIcon className="h-12 w-12 mx-auto" />
+                  <Bell className="h-12 w-12 mx-auto" />
                 </div>
                 <p className="text-gray-500">Нет новых уведомлений</p>
               </div>
