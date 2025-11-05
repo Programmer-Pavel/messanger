@@ -1,9 +1,12 @@
 import { Link, useLocation } from 'react-router';
 import { UserMenu } from './UserMenu';
-import cn from 'classnames';
+import { cn } from '@shared/lib/utils';
 import { useState } from 'react';
 import { ROUTES } from '@shared/config/routes';
 import { Notifications } from '@features/notifications';
+import { Button } from '@shared/ui/button';
+import { Menu, X } from 'lucide-react';
+import logo from '@assets/chat.png';
 
 export const Header = () => {
   const location = useLocation();
@@ -60,7 +63,11 @@ export const Header = () => {
               to={ROUTES.ROOT}
               className="text-2xl font-bold text-indigo-600"
             >
-              Logo
+              <img
+                src={logo}
+                alt="Logo"
+                className="w-10 h-10"
+              />
             </Link>
 
             {/* Десктопная навигация */}
@@ -88,49 +95,17 @@ export const Header = () => {
             <UserMenu />
 
             {/* Бургер-кнопка для мобильного меню */}
-            <button
-              type="button"
-              className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+            <Button
+              variant="secondary"
+              size="icon"
+              className="md:hidden"
               aria-controls="mobile-menu"
-              aria-expanded="false"
+              aria-expanded={isMenuOpen}
               onClick={toggleMenu}
             >
+              {!isMenuOpen ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
               <span className="sr-only">Открыть главное меню</span>
-              {/* Иконка бургера (меняется когда меню открыто) */}
-              {!isMenuOpen ? (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              )}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -146,7 +121,7 @@ export const Header = () => {
               key={item.name}
               to={item.to}
               className={getMobileNavItemClasses(item.to)}
-              onClick={() => setIsMenuOpen(false)} // Закрывать меню при переходе
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
             </Link>

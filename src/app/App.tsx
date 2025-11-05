@@ -1,11 +1,11 @@
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
 import { RouterProvider } from 'react-router/dom';
 import { router } from './router/config';
 import { InstallPrompt } from '@widgets/pwa';
 import { queryClient } from '@shared/lib/queryClient';
 import { ErrorBoundary } from '@shared/ui/ErrorBoundary';
 import { GlobalCallHandler } from '@features/call';
+import { Toaster } from '@/shared/ui/sonner';
 
 function App() {
   return (
@@ -13,7 +13,11 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <InstallPrompt />
         <RouterProvider router={router} />
-        <Toaster />
+        <Toaster
+          richColors
+          closeButton
+          duration={5000}
+        />
         <GlobalCallHandler />
       </QueryClientProvider>
     </ErrorBoundary>

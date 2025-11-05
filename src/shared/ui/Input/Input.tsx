@@ -1,7 +1,7 @@
 import { ChangeEvent, InputHTMLAttributes, RefCallback, forwardRef, useRef, useState } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
-import cn from 'classnames';
 import { EyeIcon, EyeSlashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { cn } from '@/shared/lib/utils';
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;

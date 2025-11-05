@@ -1,5 +1,5 @@
+import { cn } from '@/shared/lib/utils';
 import React, { ButtonHTMLAttributes, ReactNode } from 'react';
-import cn from 'classnames';
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /** Иконка (компонент) */

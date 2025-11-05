@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react';
-import cn from 'classnames';
 import { Spinner } from '@shared/ui/Spinner';
+import { cn } from '@/shared/lib/utils';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger';

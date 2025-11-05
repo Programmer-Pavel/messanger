@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { useAuthenticatedSocket } from '@features/socket';
 import { MessageNotification, useNotificationsStore } from '../model/notificationsStore';
 import { BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import cn from 'classnames';
 import { useClickOutside } from '@shared/hooks/useClickOutside';
 import { formatRelativeTime } from '@shared/lib/formatDate';
 import React from 'react';
 import { Button } from '@shared/ui/Button';
 import { IconButton } from '@shared/ui/IconButton';
+import { cn } from '@/shared/lib/utils';
 
 export const Notifications = () => {
   const [isOpen, setIsOpen] = useState(false);

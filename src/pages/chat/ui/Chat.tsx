@@ -2,11 +2,11 @@ import { Button } from '@shared/ui/Button';
 import { Input } from '@shared/ui/Input';
 import { useEffect, useMemo, useState } from 'react';
 import { useGetUsers } from '../api/useGetAllUsers';
-import cn from 'classnames';
 import { User, useUserStore } from '@features/auth';
 import { VideoCall } from './VideoCall';
 import { useAuthenticatedSocket } from '@features/socket';
 import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import { cn } from '@/shared/lib/utils';
 
 interface Message {
   id: string;

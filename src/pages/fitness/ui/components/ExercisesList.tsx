@@ -4,8 +4,8 @@ import { Spinner } from '@shared/ui/Spinner';
 import { useState, useEffect } from 'react';
 import { AddApproachForm } from './AddApproachForm';
 import { ApproachesTable } from './ApproachesTable';
-import classNames from 'classnames';
 import { useUserStore } from '@features/auth';
+import { cn } from '@/shared/lib/utils';
 
 export const ExercisesList = () => {
   const user = useUserStore((state) => state.user);
@@ -32,7 +32,7 @@ export const ExercisesList = () => {
   }, [exercisesByUserId, selectedExercise]);
 
   const getExerciseItemClasses = (isSelected: boolean) => {
-    return classNames('p-3 rounded-md cursor-pointer transition-colors border', {
+    return cn('p-3 rounded-md cursor-pointer transition-colors border', {
       'bg-blue-100 border-l-4 border-blue-500 shadow-md': isSelected,
       'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300 shadow-sm': !isSelected,
     });

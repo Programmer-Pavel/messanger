@@ -1,8 +1,7 @@
 import { ApiError } from '@shared/types/ApiError';
 import { useMutation, type UseMutationOptions, type UseMutationResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export function useCustomMutation<TData, TVariables>(
   mutationFn: (variables: TVariables) => Promise<TData>,
