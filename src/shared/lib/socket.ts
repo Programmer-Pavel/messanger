@@ -1,4 +1,4 @@
-import { ENV, isDevelopment } from '@shared/config/env';
+import { ENV } from '@shared/config/env';
 import { io, Socket } from 'socket.io-client';
 
 class SocketService {
@@ -8,21 +8,11 @@ class SocketService {
 
   public static getInstance(): Socket {
     if (!SocketService.instance) {
-      const development = isDevelopment();
-
       // Создаем экземпляр сокета
-      // В разработке используем относительный путь для прокси
-      // В продакшне используем полный URL API сервера
-      SocketService.instance = development
-        ? io({
-            path: ENV.SOCKET_PATH,
-            reconnectionAttempts: 3,
-            reconnectionDelay: 1000,
-          })
-        : io(ENV.API_URL, {
-            reconnectionAttempts: 3,
-            reconnectionDelay: 1000,
-          });
+      SocketService.instance = io(ENV.API_URL, {
+        reconnectionAttempts: 3,
+        reconnectionDelay: 1000,
+      });
 
       // Настройка обнаружения офлайн-режима
       SocketService.instance.on('connect_error', (error) => {

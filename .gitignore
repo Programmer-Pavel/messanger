@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 
+.env
 .env.production
 .env.development
 
@@ -26,3 +27,4 @@ dist-ssr
 *.sln
 *.sw?
 
+.cursor
