@@ -1,14 +1,14 @@
 import { Button } from '@shared/ui/Button';
-import { Video } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { User, useUserStore } from '@features/auth';
 import { useAuthenticatedSocket } from '@features/socket';
 import { useCallStore } from '@features/call';
 
-interface VideoCallProps {
+interface AudioCallProps {
   selectedUser?: User;
 }
 
-export const VideoCall = ({ selectedUser }: VideoCallProps) => {
+export const AudioCall = ({ selectedUser }: AudioCallProps) => {
   const user = useUserStore((state) => state.user);
   const { setCallActive, setSelectedUser, initializeMedia, createPeerConnection, setCallMode } = useCallStore();
 
@@ -18,11 +18,11 @@ export const VideoCall = ({ selectedUser }: VideoCallProps) => {
     if (!selectedUser || !socket || !user) return;
 
     try {
-      setCallMode('video');
+      setCallMode('audio');
 
-      const stream = await initializeMedia('video');
+      const stream = await initializeMedia('audio');
       if (!stream) {
-        console.error('Не удалось получить медиапоток');
+        console.error('Не удалось получить медиапоток (audio)');
         return;
       }
 
@@ -45,13 +45,13 @@ export const VideoCall = ({ selectedUser }: VideoCallProps) => {
         to: selectedUser.id,
         from: user.id,
         fromName: user.name,
-        mode: 'video',
+        mode: 'audio',
       });
 
       setSelectedUser(selectedUser);
       setCallActive(true);
     } catch (error) {
-      console.error('Ошибка при инициировании звонка:', error);
+      console.error('Ошибка при инициировании аудиозвонка:', error);
     }
   };
 
@@ -61,7 +61,7 @@ export const VideoCall = ({ selectedUser }: VideoCallProps) => {
       disabled={!selectedUser}
       className="px-6"
     >
-      <Video className="h-5 w-5" />
+      <Phone className="h-5 w-5" />
     </Button>
   );
 };

@@ -7,6 +7,7 @@ import { VideoCall } from './VideoCall';
 import { useAuthenticatedSocket } from '@features/socket';
 import { cn } from '@/shared/lib/utils';
 import { MessagesSquare } from 'lucide-react';
+import { AudioCall } from '@features/audio-call';
 
 interface Message {
   id: string;
@@ -42,7 +43,6 @@ export const Chat = () => {
   useEffect(() => {
     if (!socket) return;
 
-    // Обработчик приватных сообщений (входящих)
     const handlePrivateMessage = ({ message, fromUserId }: { message: Message; fromUserId: string }) => {
       if (
         (currentUser && message.userId === currentUser.id) ||
@@ -52,7 +52,6 @@ export const Chat = () => {
       }
     };
 
-    // Обработчик уведомлений о новых сообщениях
     const handleNewMessageNotification = (notification: MessageNotification) => {
       const fromUserId = parseInt(notification.fromUserId);
 
@@ -61,7 +60,6 @@ export const Chat = () => {
       }
     };
 
-    // Обработчик истории сообщений при подключении к приватному чату
     const handlePrivateChat = (data: { roomId: string; messages: Message[] }) => {
       setMessages(data.messages || []);
     };
@@ -100,13 +98,10 @@ export const Chat = () => {
   const handleUserSelect = (user: User) => {
     setSelectedUser(user);
 
-    // Очищаем сообщения перед загрузкой новых
     setMessages([]);
 
-    // Очищаем уведомление для выбранного пользователя
     setUnreadMessages((prev) => prev.filter((id) => id !== user.id));
 
-    // Инициализация приватного чата
     if (socket && currentUser) {
       socket.emit('startPrivateChat', {
         fromUserId: currentUser.id,
@@ -120,13 +115,8 @@ export const Chat = () => {
     const hasUnreadMessages = unreadMessages.includes(user.id);
 
     return cn('flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors duration-200', {
-      // Активное состояние - синий фон
       'bg-blue-100 border-l-4 border-blue-500': isActiveUser,
-
-      // Неактивное состояние с непрочитанными сообщениями
       'bg-yellow-50 hover:bg-yellow-100': hasUnreadMessages && !isActiveUser,
-
-      // Обычное неактивное состояние (Вариант 3)
       'bg-indigo-50 hover:bg-indigo-100': !hasUnreadMessages && !isActiveUser,
     });
   };
@@ -183,7 +173,6 @@ export const Chat = () => {
                       <span className={getUserNameClasses(user)}>{user.name}</span>
                     </div>
 
-                    {/* Индикатор нового сообщения */}
                     {unreadMessages.includes(user.id) && (
                       <div className="flex items-center">
                         <span className="text-xs font-semibold text-yellow-600 mr-2">Новое</span>
@@ -196,10 +185,8 @@ export const Chat = () => {
             </div>
           </div>
 
-          {/* Chat Area */}
           <div className="flex-1 p-6">
             {selectedUser ? (
-              // Область чата, когда пользователь выбран
               <>
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-gray-800 mb-4">Чат с {selectedUser.name}</h2>
@@ -241,10 +228,10 @@ export const Chat = () => {
                   </Button>
 
                   <VideoCall selectedUser={selectedUser} />
+                  <AudioCall selectedUser={selectedUser} />
                 </div>
               </>
             ) : (
-              // Пустое состояние чата - когда пользователь не выбран
               <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                 <MessagesSquare className="w-20 h-20 text-gray-400 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-600 mb-2">Выберите пользователя для начала чата</h3>

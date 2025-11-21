@@ -17,41 +17,34 @@ export const IncomingCallModal = ({ callerName, callerId, incomingOffer }: Incom
     initializeMedia,
     createPeerConnection,
     applyPendingCandidates,
+    callMode,
   } = useCallStore();
 
-  // Принятие входящего звонка
   const acceptCall = async () => {
     if (!callerId || !socket || !incomingOffer) return;
 
     try {
-      // Инициализация медиа-потока напрямую из хранилища
-      const stream = await initializeMedia();
+      const stream = await initializeMedia(callMode);
       if (!stream) {
         console.error('Не удалось получить медиапоток');
         resetCallState();
         return;
       }
 
-      // Создание peer connection
       const pc = createPeerConnection(callerId);
 
-      // Устанавливаем удаленное описание
       await pc.setRemoteDescription(new RTCSessionDescription(incomingOffer));
 
-      // Применяем накопленные ICE кандидаты
       await applyPendingCandidates();
 
-      // Создаем ответ
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
 
-      // Отправляем ответ звонящему
       socket.emit('call-accept', {
         answer,
         to: callerId,
       });
 
-      // Устанавливаем режим активного звонка
       setCallActive(true);
       setIncomingCall(false);
     } catch (error) {
@@ -59,8 +52,6 @@ export const IncomingCallModal = ({ callerName, callerId, incomingOffer }: Incom
       resetCallState();
     }
   };
-
-  // Отклонение звонка
   const declineCall = () => {
     if (socket && callerId) {
       socket.emit('decline-call', {
@@ -70,10 +61,14 @@ export const IncomingCallModal = ({ callerName, callerId, incomingOffer }: Incom
     setIncomingCall(false);
   };
 
+  const title = callMode === 'audio' ? 'Входящий аудиозвонок' : 'Входящий видеозвонок';
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold mb-4">Входящий звонок от {callerName}</h3>
+        <h3 className="text-xl font-bold mb-4">
+          {title} от {callerName}
+        </h3>
         <div className="flex justify-center space-x-4">
           <Button
             onClick={acceptCall}

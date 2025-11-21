@@ -25,26 +25,25 @@ export const GlobalCallHandler = () => {
   useEffect(() => {
     if (!socket || !user?.id) return;
 
-    // Обработка входящего звонка
     const handleIncomingCall = ({
       offer,
       from,
       fromName,
+      mode,
     }: {
       offer: RTCSessionDescriptionInit;
       from: string;
       fromName: string;
+      mode?: 'audio' | 'video';
     }) => {
-      console.log('incoming-call от', fromName);
-      setIncomingCall(true, from, fromName, offer);
+      console.log('incoming-call от', fromName, 'режим', mode);
+      setIncomingCall(true, from, fromName, offer, mode || 'video');
     };
 
-    // Обработка ICE кандидатов
     const handleIceCandidate = ({ candidate }: { candidate: RTCIceCandidateInit }) => {
       addIceCandidate(candidate);
     };
 
-    // Обработка принятия звонка
     const handleCallAccepted = async ({ answer }: { answer: RTCSessionDescriptionInit }) => {
       console.log('Звонок принят, получен ответ');
       if (peerConnection) {
@@ -59,13 +58,11 @@ export const GlobalCallHandler = () => {
       }
     };
 
-    // Обработка отклонения звонка
     const handleCallDeclined = () => {
       console.log('Звонок отклонен');
       resetCallState();
     };
 
-    // Обработка завершения звонка
     const handleCallEnded = () => {
       console.log('Звонок завершен другой стороной');
       resetCallState();

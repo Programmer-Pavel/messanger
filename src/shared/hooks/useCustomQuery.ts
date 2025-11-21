@@ -1,7 +1,6 @@
 import { useQuery, type UseQueryOptions, type UseQueryResult } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 
-// Типы для ключа запроса и функции получения данных
 type QueryKey = readonly unknown[];
 
 export function useCustomQuery<TQueryFnData = unknown, TData = TQueryFnData>(

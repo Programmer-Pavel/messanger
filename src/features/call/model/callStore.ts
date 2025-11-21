@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { User } from '@features/auth';
 
 export interface CallState {
-  // Состояние звонка
   isCallActive: boolean;
   isIncomingCall: boolean;
   callerName: string;
@@ -10,35 +9,34 @@ export interface CallState {
   incomingOffer: RTCSessionDescriptionInit | null;
   selectedUser: User | null;
 
-  // WebRTC состояние
+  callMode: 'video' | 'audio';
+
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
   peerConnection: RTCPeerConnection | null;
   pendingCandidates: RTCIceCandidateInit[];
 
-  // Методы для управления звонком
   setCallActive: (active: boolean) => void;
   setIncomingCall: (
     incoming: boolean,
     callerId?: string,
     callerName?: string,
     offer?: RTCSessionDescriptionInit | null,
+    mode?: 'audio' | 'video',
   ) => void;
   setSelectedUser: (user: User | null) => void;
+  setCallMode: (mode: 'video' | 'audio') => void;
 
-  // Методы для управления WebRTC
-  initializeMedia: () => Promise<MediaStream | null>;
+  initializeMedia: (mode?: 'video' | 'audio') => Promise<MediaStream | null>;
   createPeerConnection: (targetUserId: string | number) => RTCPeerConnection;
   applyPendingCandidates: () => Promise<void>;
   addIceCandidate: (candidate: RTCIceCandidateInit) => void;
   cleanupResources: () => void;
 
-  // Сброс состояния
   resetCallState: () => void;
 }
 
 export const useCallStore = create<CallState>((set, get) => ({
-  // Начальные значения состояния
   isCallActive: false,
   isIncomingCall: false,
   callerName: '',
@@ -46,29 +44,33 @@ export const useCallStore = create<CallState>((set, get) => ({
   incomingOffer: null,
   selectedUser: null,
 
-  // WebRTC состояние
+  callMode: 'video',
+
   localStream: null,
   remoteStream: null,
   peerConnection: null,
   pendingCandidates: [],
 
-  // Методы управления звонком
   setCallActive: (active) => set({ isCallActive: active }),
 
-  setIncomingCall: (incoming, callerId = '', callerName = '', offer = null) =>
+  setIncomingCall: (incoming, callerId = '', callerName = '', offer = null, mode = 'video') =>
     set((state) => ({
       isIncomingCall: incoming,
       callerId: incoming ? callerId : state.callerId,
       callerName: incoming ? callerName : state.callerName,
       incomingOffer: incoming ? offer : state.incomingOffer,
+      callMode: incoming ? mode : state.callMode,
     })),
 
   setSelectedUser: (user) => set({ selectedUser: user }),
+  setCallMode: (mode) => set({ callMode: mode }),
 
-  // Методы для управления WebRTC
-  initializeMedia: async () => {
+  initializeMedia: async (mode = 'video') => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      const constraints: MediaStreamConstraints =
+        mode === 'audio' ? { audio: true, video: false } : { audio: true, video: true };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       set({ localStream: stream });
       return stream;
     } catch (error) {
@@ -78,7 +80,6 @@ export const useCallStore = create<CallState>((set, get) => ({
   },
 
   createPeerConnection: () => {
-    // Закрываем существующее соединение, если оно есть
     const currentPeerConnection = get().peerConnection;
     if (currentPeerConnection) {
       currentPeerConnection.close();
@@ -88,7 +89,6 @@ export const useCallStore = create<CallState>((set, get) => ({
       iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
     });
 
-    // Добавляем локальные треки
     const { localStream } = get();
     if (localStream) {
       localStream.getTracks().forEach((track) => {
@@ -96,14 +96,12 @@ export const useCallStore = create<CallState>((set, get) => ({
       });
     }
 
-    // Обработка входящих треков
     pc.ontrack = (event) => {
       if (event.streams && event.streams[0]) {
         set({ remoteStream: event.streams[0] });
       }
     };
 
-    // Логирование изменений состояния
     pc.oniceconnectionstatechange = () => {
       console.log('ICE состояние изменилось:', pc.iceConnectionState);
     };
@@ -170,7 +168,6 @@ export const useCallStore = create<CallState>((set, get) => ({
     });
   },
 
-  // Сброс всего состояния
   resetCallState: () => {
     get().cleanupResources();
 
@@ -181,6 +178,7 @@ export const useCallStore = create<CallState>((set, get) => ({
       callerId: '',
       incomingOffer: null,
       selectedUser: null,
+      callMode: 'video',
     });
   },
 }));

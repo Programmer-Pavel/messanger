@@ -9,7 +9,6 @@ export function emitUserOnline(userId: number) {
     socket.emit('userOnline', userId);
     hasEmittedUserOnline = true;
 
-    // Сбросить флаг при отключении
     socket.once('disconnect', () => {
       hasEmittedUserOnline = false;
     });

@@ -6,25 +6,32 @@ import { Phone } from 'lucide-react';
 
 export const ActiveCallModal = () => {
   const socket = useAuthenticatedSocket();
-  const { selectedUser, callerId, resetCallState, localStream, remoteStream } = useCallStore();
+  const { selectedUser, callerId, resetCallState, localStream, remoteStream, callMode } = useCallStore();
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-
-  // Обновляем видео-элементы при изменении потоков
-  useEffect(() => {
-    if (localVideoRef.current && localStream) {
-      localVideoRef.current.srcObject = localStream;
-    }
-  }, [localStream]);
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
-      remoteVideoRef.current.srcObject = remoteStream;
+    if (callMode === 'video') {
+      if (localVideoRef.current && localStream) {
+        localVideoRef.current.srcObject = localStream;
+      }
     }
-  }, [remoteStream]);
+  }, [localStream, callMode]);
 
-  // Завершение звонка
+  useEffect(() => {
+    if (callMode === 'video') {
+      if (remoteVideoRef.current && remoteStream) {
+        remoteVideoRef.current.srcObject = remoteStream;
+      }
+    } else {
+      if (remoteAudioRef.current && remoteStream) {
+        remoteAudioRef.current.srcObject = remoteStream;
+      }
+    }
+  }, [remoteStream, callMode]);
+
   const endCall = () => {
     const targetUserId = selectedUser?.id || callerId;
 
@@ -36,6 +43,31 @@ export const ActiveCallModal = () => {
 
     resetCallState();
   };
+
+  if (callMode === 'audio') {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
+          <h2 className="text-xl font-bold mb-6">Аудиозвонок с {selectedUser?.name || 'пользователем'}</h2>
+
+          <audio
+            ref={remoteAudioRef}
+            autoPlay
+            className="hidden"
+          />
+
+          <div className="flex justify-center mt-4">
+            <Button
+              onClick={endCall}
+              className="bg-red-500 hover:bg-red-600 rounded-full px-3.5 py-3.5"
+            >
+              <Phone className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">

@@ -16,10 +16,8 @@ export const useAuthenticatedSocket = () => {
     }
 
     if (user) {
-      // Вызываем функцию из модуля управления статусом
       emitUserOnline(user.id);
 
-      // Добавляем обработчик подключения сокета
       const handleConnect = () => {
         emitUserOnline(user.id);
       };
