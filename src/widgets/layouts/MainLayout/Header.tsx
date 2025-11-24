@@ -7,8 +7,11 @@ import { Notifications } from '@features/notifications';
 import { Button } from '@shared/ui/button';
 import { Menu, X } from 'lucide-react';
 import logo from '@assets/chat.png';
+import { useUserStore } from '@/features/auth';
 
 export const Header = () => {
+  const user = useUserStore((state) => state.user);
+
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -92,7 +95,10 @@ export const Header = () => {
             {/* Кнопка уведомлений */}
             <Notifications />
 
-            <UserMenu />
+            <div className="flex items-center gap-2">
+              <span className="hidden text-white sm:inline">{user?.name}</span>
+              <UserMenu />
+            </div>
 
             {/* Бургер-кнопка для мобильного меню */}
             <Button

@@ -1,23 +1,24 @@
 import { Button } from '@shared/ui/Button';
 import { Input } from '@shared/ui/Input';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetUsers } from '../api/useGetAllUsers';
 import { User, useUserStore } from '@features/auth';
 import { VideoCall } from './VideoCall';
 import { useAuthenticatedSocket } from '@features/socket';
 import { cn } from '@/shared/lib/utils';
-import { MessagesSquare } from 'lucide-react';
+import { MessagesSquare, SendHorizonal } from 'lucide-react';
 import { AudioCall } from '@features/audio-call';
 
 interface Message {
   id: string;
   content: string;
-  userId: number;
+  userId: string;
   roomId: string;
-  createdAt: number;
+  createdAt: Date;
   user: {
-    id: number;
+    id: string;
     name: string;
+    email: string;
   };
 }
 
@@ -32,11 +33,11 @@ export const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageInput, setMessageInput] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
-  const [unreadMessages, setUnreadMessages] = useState<number[]>([]);
+  const [unreadMessages, setUnreadMessages] = useState<string[]>([]);
 
   const currentUser = useUserStore((state) => state.user);
 
-  const { data: allUsers = [] } = useGetUsers();
+  const { data: users = [] } = useGetUsers();
 
   const socket = useAuthenticatedSocket();
 
@@ -44,16 +45,13 @@ export const Chat = () => {
     if (!socket) return;
 
     const handlePrivateMessage = ({ message, fromUserId }: { message: Message; fromUserId: string }) => {
-      if (
-        (currentUser && message.userId === currentUser.id) ||
-        (selectedUser && parseInt(fromUserId) === selectedUser.id)
-      ) {
+      if ((currentUser && message.userId === currentUser.id) || (selectedUser && fromUserId === selectedUser.id)) {
         setMessages((prev) => [...prev, message]);
       }
     };
 
     const handleNewMessageNotification = (notification: MessageNotification) => {
-      const fromUserId = parseInt(notification.fromUserId);
+      const fromUserId = notification.fromUserId;
 
       if (!selectedUser || selectedUser.id !== fromUserId) {
         setUnreadMessages((prev) => (prev.includes(fromUserId) ? prev : [...prev, fromUserId]));
@@ -74,14 +72,6 @@ export const Chat = () => {
       socket.off('privateChat', handlePrivateChat);
     };
   }, [socket, selectedUser]);
-
-  const users = useMemo(() => {
-    if (allUsers.length > 0) {
-      return allUsers.filter((el) => el.id !== currentUser?.id);
-    }
-
-    return [];
-  }, [allUsers]);
 
   const sendMessage = () => {
     if (!socket || !currentUser || !messageInput.trim() || !selectedUser) return;
@@ -139,14 +129,14 @@ export const Chat = () => {
   //   });
   // };
 
-  const getMessageClasses = (messageUserId: number) => {
+  const getMessageClasses = (messageUserId: string) => {
     return cn('mb-4', {
       'text-right': messageUserId === currentUser?.id,
       'text-left': messageUserId !== currentUser?.id,
     });
   };
 
-  const getMessageTextClasses = (messageUserId: number) => {
+  const getMessageTextClasses = (messageUserId: string) => {
     return cn('inline-block p-3 rounded-lg max-w-[70%]', {
       'bg-blue-500 text-white': messageUserId === currentUser?.id,
       'bg-gray-100 text-gray-800': messageUserId !== currentUser?.id,
@@ -158,7 +148,7 @@ export const Chat = () => {
       <div className="bg-white rounded-lg shadow-md">
         <div className="flex h-[600px]">
           {/* Users Panel */}
-          <div className="w-64 border-r border-gray-200">
+          <div className="w-46 lg:w-64 border-r border-gray-200">
             <div className="p-4">
               <h3 className="text-lg font-semibold mb-4 text-gray-800">Пользователи</h3>
               <div className="space-y-2">
@@ -187,11 +177,11 @@ export const Chat = () => {
 
           <div className="flex-1 p-6">
             {selectedUser ? (
-              <>
+              <div className="flex flex-col justify-between h-full">
                 <div className="mb-6">
                   <h2 className="text-2xl font-bold text-gray-800 mb-4">Чат с {selectedUser.name}</h2>
                 </div>
-                <div className="h-[400px] overflow-y-auto mb-4 p-4 border border-gray-200 rounded-lg">
+                <div className="h-full overflow-y-auto mb-4 p-4 border border-gray-200 rounded-lg">
                   {messages.map((message) => (
                     <div
                       key={message.id}
@@ -209,28 +199,31 @@ export const Chat = () => {
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-4">
-                  <Input
-                    type="text"
-                    value={messageInput}
-                    onChange={(e) => setMessageInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                    placeholder="Введите сообщение..."
-                    className="flex-1"
-                    containerClassName="w-full"
-                  />
-                  <Button
-                    onClick={sendMessage}
-                    disabled={!messageInput.trim()}
-                    className="px-6"
-                  >
-                    Отправить
-                  </Button>
-
-                  <VideoCall selectedUser={selectedUser} />
-                  <AudioCall selectedUser={selectedUser} />
+                <div className=" flex gap-4 lg:flex-row flex-col">
+                  <div className="w-full flex gap-4">
+                    <Input
+                      type="text"
+                      value={messageInput}
+                      onChange={(e) => setMessageInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                      placeholder="Введите сообщение..."
+                      className="flex-1"
+                      containerClassName="w-full"
+                    />
+                    <Button
+                      onClick={sendMessage}
+                      disabled={!messageInput.trim()}
+                      className="px-6"
+                    >
+                      <SendHorizonal className="h-5 w-5" />
+                    </Button>
+                  </div>
+                  <div className="flex gap-4">
+                    <VideoCall selectedUser={selectedUser} />
+                    <AudioCall selectedUser={selectedUser} />
+                  </div>
                 </div>
-              </>
+              </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
                 <MessagesSquare className="w-20 h-20 text-gray-400 mb-4" />

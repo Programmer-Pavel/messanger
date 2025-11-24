@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@shared/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@shared/ui/avatar';
+import { Avatar, AvatarImage } from '@shared/ui/avatar';
 
 export const UserMenu = () => {
   const user = useUserStore((state) => state.user);
@@ -20,13 +20,9 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div>
-          <Avatar className="h-8 w-8 cursor-pointer">
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>{user?.name?.[0] ?? 'U'}</AvatarFallback>
-          </Avatar>
-          <span className="hidden sm:inline">{user?.name}</span>
-        </div>
+        <Avatar className="h-8 w-8 cursor-pointer">
+          <AvatarImage src="https://github.com/shadcn.png" />
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

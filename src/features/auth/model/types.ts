@@ -16,7 +16,7 @@ export const signupSchema = z.object({
 export type SignupDTO = z.infer<typeof signupSchema>;
 
 export interface User {
-  id: number;
+  id: string;
   email: string;
   name: string;
 }
